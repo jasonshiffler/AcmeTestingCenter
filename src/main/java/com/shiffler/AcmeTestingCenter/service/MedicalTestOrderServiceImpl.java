@@ -1,7 +1,6 @@
 package com.shiffler.AcmeTestingCenter.service;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestResultEnum;
-import com.shiffler.AcmeTestingCenter.exceptions.ItemNotFoundException;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestStatusEnum;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,8 +18,8 @@ import java.util.UUID;
 @Slf4j
 public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
-    MedicalTestRepository medicalTestRepository;
-    MedicalTestOrderRepository medicalTestOrderRepository;
+    private final MedicalTestRepository medicalTestRepository;
+    private final MedicalTestOrderRepository medicalTestOrderRepository;
 
     @Autowired
     public MedicalTestOrderServiceImpl(MedicalTestRepository medicalTestRepository,
@@ -42,10 +42,10 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
      * Saves orders for medical tests to the repository
      * @param medicalTestOrder - Describes the medical test being ordered
      * @return - A copy of the order being saved
-     * @throws ItemNotFoundException
+     * @throws NoSuchElementException
      */
     @Override
-    public MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder) throws ItemNotFoundException {
+    public MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder) throws NoSuchElementException {
 
         log.info("Medical Test Order being submitted for {}", medicalTestOrder.toString());
 
@@ -81,7 +81,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         else {
             log.error("Medical Test order used invalid test code {} ", medicalTestOrder.getId().toString() +
                     medicalTestOrder.getTestCode().toString());
-            throw new ItemNotFoundException("The medical test code does not exist");
+            throw new NoSuchElementException("The medical test code does not exist");
         }
     }
 

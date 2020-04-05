@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class ReplenishTestsImpl {
 
-    MedicalTestRepository medicalTestRepository;
+    private final MedicalTestRepository medicalTestRepository;
 
 
     @Autowired

@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface MedicalTestService {
     Optional<MedicalTest> getMedicalTestById(UUID uuid);
     void saveMedicalTest(MedicalTest medicalTest);
+
+    Iterable<MedicalTest> getAllMedicalTests();
 }

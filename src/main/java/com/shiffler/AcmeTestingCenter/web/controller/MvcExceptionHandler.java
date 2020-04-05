@@ -1,6 +1,10 @@
+/*
+Handles the exceptions that are thrown due to actions in the web layer and returns an appropriate Response Entity
+so the API user understands what caused the error condition
+ */
+
 package com.shiffler.AcmeTestingCenter.web.controller;
 
-import com.shiffler.AcmeTestingCenter.exceptions.ItemNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class MvcExceptionHandler {
@@ -39,17 +44,10 @@ public class MvcExceptionHandler {
 
     }
 
-    /**
-     * Handles the exception that gets thrown when an items is searched for but not found
-     * @param e The exception
-     * @return A Response Enity that provides the error message to the user.
-     */
 
-    @ExceptionHandler(ItemNotFoundException.class) //This is the Exception that is thrown when a validation fails
-    public ResponseEntity<List> itemNotFoundException(Exception e) {
-
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException e){
+        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 
