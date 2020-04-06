@@ -1,48 +1,63 @@
-package com.shiffler.AcmeTestingCenter.bootstrap;
+/*
+Performs state initialization
+ */
 
+
+package com.shiffler.AcmeTestingCenter.bootstrap;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestStatusEnum;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestOrderRepository;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestRepository;
+import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
+import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class LoadMedicalTests implements CommandLineRunner {
 
-    MedicalTestRepository medicalTestRepository;
-    MedicalTestOrderRepository medicalTestOrderRepository;
+
+    private final MedicalTestService medicalTestService;
+    private final MedicalTestOrderService medicalTestOrderService;
 
     @Autowired
-    public LoadMedicalTests(MedicalTestRepository medicalTestRepository,
-                            MedicalTestOrderRepository medicalTestOrderRepository){
+    public LoadMedicalTests(MedicalTestService medicalTestService,
+                            MedicalTestOrderService medicalTestOrderService){
 
-        this.medicalTestRepository = medicalTestRepository;
-        this.medicalTestOrderRepository = medicalTestOrderRepository;
+        this.medicalTestService = medicalTestService;
+        this.medicalTestOrderService = medicalTestOrderService;
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        //this.clearTable();
+    public void run(String... args) {
         this.createTests();
         this.createOrders();
     }
 
+    @Scheduled(cron = " 30 * * * * *")
+    private void programFlow(){
 
-    @Transactional
-    public void clearTable(){
-        medicalTestRepository.deleteAll();
-        medicalTestOrderRepository.deleteAll();
+        //Log the current status of Medical Test Kit Inventory
+        medicalTestService.logLowInventoryMedicalTests();
+
+        //Replenish depleted Medical Tests
+        medicalTestService.addStockToMedicalTests();
+
+        //Look through Medical Test Orders that are on hold due to lack of inventory
+        //If there are testkits that are now available change the status and update the testkit inventory
+
     }
+
 
     @Transactional
     public void createTests(){
 
-            medicalTestRepository.save(MedicalTest.builder()
+            medicalTestService.saveMedicalTest(MedicalTest.builder()
                     .testName("SARS-CoV-2")
                     .minOnHand(10)
                     .quantityOnHand(15)
@@ -51,7 +66,7 @@ public class LoadMedicalTests implements CommandLineRunner {
                     .build()
             );
 
-            medicalTestRepository.save(MedicalTest.builder()
+        medicalTestService.saveMedicalTest(MedicalTest.builder()
                     .testName("Rapid Influenza Antigen")
                     .minOnHand(200)
                     .quantityOnHand(400)
@@ -60,7 +75,7 @@ public class LoadMedicalTests implements CommandLineRunner {
                     .build()
             );
 
-        medicalTestRepository.save(MedicalTest.builder()
+        medicalTestService.saveMedicalTest(MedicalTest.builder()
                 .testName("Ebola Antibody")
                 .minOnHand(5)
                 .quantityOnHand(10)
@@ -69,7 +84,7 @@ public class LoadMedicalTests implements CommandLineRunner {
                 .build()
         );
 
-        medicalTestRepository.save(MedicalTest.builder()
+        medicalTestService.saveMedicalTest(MedicalTest.builder()
                 .testName("MERS-COV")
                 .minOnHand(10)
                 .quantityOnHand(14)
@@ -85,6 +100,6 @@ public class LoadMedicalTests implements CommandLineRunner {
                 .testCode("00000A0003")
                 .testStatus(MedicalTestStatusEnum.ORDER_RECEIVED)
                 .build();
-        medicalTestOrderRepository.save(order);
+        medicalTestOrderService.saveMedicalTestOrder(order);
     }
 }

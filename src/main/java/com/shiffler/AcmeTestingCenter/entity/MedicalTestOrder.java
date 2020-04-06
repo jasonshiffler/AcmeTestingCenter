@@ -5,7 +5,6 @@
 
 package com.shiffler.AcmeTestingCenter.entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,10 +14,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Size;
 import java.time.OffsetDateTime;
-import java.util.UUID;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -58,6 +55,5 @@ public class MedicalTestOrder {
     @Column(name="medical_test_result")
     @Enumerated(EnumType.STRING)
     private MedicalTestResultEnum medicalTestResultEnum;
-
 
 }

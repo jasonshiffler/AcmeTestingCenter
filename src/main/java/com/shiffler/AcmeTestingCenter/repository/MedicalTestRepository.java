@@ -14,10 +14,25 @@ import java.util.stream.Stream;
 @Repository
 public interface MedicalTestRepository extends CrudRepository<MedicalTest, UUID> {
 
+    /**
+     * Allows a Medical Test to be found by Test Code. Requires an exact match
+     * @param testCode - The testcode to search on
+     * @return - An Optional of a MedicalTest
+     */
     Optional<MedicalTest> findByTestCode(String testCode);
+
+    /**
+     * Returns all of the MedicalTests with a testname that contains a certain String.
+     * @param testName
+     * @return
+     */
     Iterable<MedicalTest> findByTestNameContaining(String testName);
 
-    @Transactional
+    /**
+     * Finds Medical Tests that have less inventory on hand than the configured minimum
+     * @return
+     */
+    //@Transactional //may not need this
     @Query("select m from MedicalTest m where m.minOnHand > m.quantityOnHand")
     List<MedicalTest> findByTestLessThanMinOnHand();
 

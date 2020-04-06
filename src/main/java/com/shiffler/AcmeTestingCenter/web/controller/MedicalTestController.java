@@ -79,13 +79,16 @@ public class MedicalTestController {
 
         log.info("Web layer request to save new MedicalTest {}", medicalTestDto.toString());
 
+        //Convert the Dto Object to the Entity format
         MedicalTest medicalTest = medicalTestMapper.medicalTestDtoToMedicalTest(medicalTestDto);
 
+        //Call the service layer to save the new MedicalTest
         medicalTestService.saveMedicalTest(medicalTest);
 
+        //Send a response
         HttpHeaders headers = new HttpHeaders();
-
         headers.setLocation(new URI("http://localhost:8081/" + medicalTest.getId()));
+
         return new ResponseEntity(headers,HttpStatus.CREATED);
 
     } //close method

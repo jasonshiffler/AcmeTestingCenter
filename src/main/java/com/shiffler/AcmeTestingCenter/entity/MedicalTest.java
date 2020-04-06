@@ -23,12 +23,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+
+//Defining Constraints here allows us to name them instead of having them generated
+@Table(name = "medical_test",
+        uniqueConstraints = @UniqueConstraint(name = "testCode_must_be_unique"
+                ,columnNames = "test_code"))
 public class MedicalTest {
 
 
     @Id
-    @GeneratedValue//(generator = "UUID")
-    @Column(name="id", columnDefinition = "uuid")// updatable = false,nullable = false)
+    @GeneratedValue
+    @Column(name="id", columnDefinition = "uuid", updatable = false)
     private UUID id;
 
     @Version
@@ -36,12 +41,10 @@ public class MedicalTest {
     private Integer version;
 
     @CreationTimestamp
-    @Column(name="created_date_time")//, //updatable = false)
-    //@Null
+    @Column(name="created_date_time", updatable = false)
     private OffsetDateTime createdDateTime;
 
     @UpdateTimestamp
-    //@Null
     @Column(name="last_modified_date_time")
     private OffsetDateTime lastModifiedDateTime;
 
@@ -67,8 +70,6 @@ public class MedicalTest {
     @Length(min = 10, max = 10, message ="The field must be 10 characters long")
     @Column(name="test_code")
     private String testCode;
-
-
 
 
 }

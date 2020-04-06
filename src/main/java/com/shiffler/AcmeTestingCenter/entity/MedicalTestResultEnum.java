@@ -1,3 +1,7 @@
+/*
+Defines the possible results of a medical test order
+ */
+
 package com.shiffler.AcmeTestingCenter.entity;
 
 public enum MedicalTestResultEnum {

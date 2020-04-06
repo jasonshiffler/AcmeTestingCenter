@@ -1,3 +1,7 @@
+/*
+Defines the possible status of a Medical Test Order
+ */
+
 package com.shiffler.AcmeTestingCenter.entity;
 
 public enum MedicalTestStatusEnum {

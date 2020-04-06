@@ -5,11 +5,11 @@ import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestStatusEnum;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestOrderRepository;
-import com.shiffler.AcmeTestingCenter.repository.MedicalTestRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,20 +18,20 @@ import java.util.UUID;
 @Slf4j
 public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
-    private final MedicalTestRepository medicalTestRepository;
+    private final MedicalTestService medicalTestService;
     private final MedicalTestOrderRepository medicalTestOrderRepository;
 
     @Autowired
-    public MedicalTestOrderServiceImpl(MedicalTestRepository medicalTestRepository,
+    public MedicalTestOrderServiceImpl(MedicalTestService medicalTestService,
                                        MedicalTestOrderRepository medicalTestOrderRepository) {
-        this.medicalTestRepository = medicalTestRepository;
+        this.medicalTestService = medicalTestService;
         this.medicalTestOrderRepository = medicalTestOrderRepository;
     }
 
     /**
-     * Allows a medical Test Order to be retrieved by the Id
+     * Allows a medical Test Order to be retrieved by id
      * @param id - The id of the MedicalTestOrder
-     * @return
+     * @return An Optional of the MedicalTestOrder that matches the id
      */
     @Override
     public Optional<MedicalTestOrder> getMedicalTestOrderById(UUID id) {
@@ -45,26 +45,25 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
      * @throws NoSuchElementException
      */
     @Override
-    public MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder) throws NoSuchElementException {
+    public MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder) {
 
         log.info("Medical Test Order being submitted for {}", medicalTestOrder.toString());
 
         String testCode = medicalTestOrder.getTestCode();
 
-        //If the testcode that was passed in is valid
-        if (verifyTestCode(testCode)) {
+        //Check to see if the testcode that was passed in is valid
+        if (medicalTestService.verifyTestCode(testCode)) {
 
 
             //Retrieve the record for the specific Medical test so we can determine the inventory
-            Optional<MedicalTest> optionalMedicalTest = medicalTestRepository.findByTestCode(testCode);
+            Optional<MedicalTest> optionalMedicalTest = medicalTestService.getMedicalTestByTestCode(testCode);
             MedicalTest medicalTest = optionalMedicalTest.get();
 
             //If there are tests on hand decrement the value available by one
             if (medicalTest.getQuantityOnHand() > 0){
-                log.info("Medical test being analyzed is {}", medicalTest.toString() );
+
                 medicalTest.setQuantityOnHand(medicalTest.getQuantityOnHand() - 1);
-                log.info("Medical test being analyzed is {}", medicalTest.toString() );
-                medicalTestRepository.save(medicalTest);
+                medicalTestService.saveMedicalTest(medicalTest);
                 medicalTestOrder.setTestStatus(MedicalTestStatusEnum.ORDER_RECEIVED);
             }
             else {
@@ -85,19 +84,20 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         }
     }
 
-
     /**
-     * Determines if the Medical Test Code is a valid test
-     * @param testCode - The Medical test code
-     * @return true if the test is valid, false if it isn't
+     * Updates num tests so that their status goes from being ORDER_RECEIVED_ONHOLD to TEST_IN_PROCESS.
+     * The intention of this method is that when new testkit inventory are recieved a certain number of testorders
+     * are taken off of hold status
+     * @param num - The number of testsorders
+     * @param testCode - which testCode to update
+     *
+     *
+     * @return
      */
-    private boolean verifyTestCode(String testCode){
-      Optional<MedicalTest> optionalMedicalTest = medicalTestRepository.findByTestCode(testCode);
-      log.info("Test code is valid: {} ", optionalMedicalTest.isPresent());
-      return optionalMedicalTest.isPresent();
+    @Override
+    public List<MedicalTestOrder> updateOrderStatusOnHoldToTestInProcess(String testCode, int num) {
+        return null;
     }
-
-
 
 
 }
