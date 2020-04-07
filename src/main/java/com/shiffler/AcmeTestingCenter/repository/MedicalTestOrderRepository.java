@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOrder, UUID> {
 
 
+    //Find a Medical Test Order with a particular order status
     @Query("select m from MedicalTestOrder m where m.testOrderStatus = ?1")
     List<MedicalTestOrder> findByOrderStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum);
 

@@ -107,7 +107,7 @@ public class LoadMedicalTests implements CommandLineRunner {
 
     public void createOrders() {
 
-        IntStream.rangeClosed(1,1000).forEach( s ->
+        IntStream.rangeClosed(1,2).forEach( s ->
                 {
         MedicalTestOrder order = MedicalTestOrder.builder()
                 .testCode("00000A0003")

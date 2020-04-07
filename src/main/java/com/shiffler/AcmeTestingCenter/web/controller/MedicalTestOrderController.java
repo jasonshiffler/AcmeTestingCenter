@@ -6,6 +6,8 @@ package com.shiffler.AcmeTestingCenter.web.controller;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
+import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestOrderMapper;
+import com.shiffler.AcmeTestingCenter.web.model.MedicalTestOrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,34 +25,45 @@ import java.util.UUID;
 public class MedicalTestOrderController {
 
     private final MedicalTestOrderService medicalTestOrderService;
+    private final MedicalTestOrderMapper medicalTestOrderMapper;
 
     @Autowired
-    public MedicalTestOrderController(MedicalTestOrderService medicalTestOrderService) {
+    public MedicalTestOrderController(MedicalTestOrderService medicalTestOrderService,
+                                      MedicalTestOrderMapper medicalTestOrderMapper) {
         this.medicalTestOrderService = medicalTestOrderService;
+        this.medicalTestOrderMapper = medicalTestOrderMapper;
     }
 
     /**
-     * Allows a MedicalTest Order to be retrieved by the id
+     * Allows a MedicalTest Order to be retrieved by the id. Returns a Dto object to hide fields that the end user
+     * doesn't need to see.
      * @param id - the id of the MedicalTestOrder that is being retrieved
      * @return - The Medical Test Order in JSON format
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalTestOrder> getMedicalTestOrderById(@PathVariable("id") UUID id){
+    public ResponseEntity<MedicalTestOrderDto> getMedicalTestOrderById(@PathVariable("id") UUID id){
 
         Optional<MedicalTestOrder> optionalMedicalTestOrder = medicalTestOrderService.getMedicalTestOrderById(id);
 
+        MedicalTestOrderDto medicalTestOrderDto = medicalTestOrderMapper
+                .medicalTestOrderToMedicalTestOrderDto(optionalMedicalTestOrder.get());
 
-        return new ResponseEntity<MedicalTestOrder>(optionalMedicalTestOrder.get(), HttpStatus.OK);
+
+        return new ResponseEntity<MedicalTestOrderDto>(medicalTestOrderDto, HttpStatus.OK);
     }
 
     /**
-     * Allows requests to be made for new Medical Tests
-     * @param medicalTestOrder
+     * Allows requests to be made for new Medical Test Orders
+     * @param medicalTestOrderDto - The MedicalTestOrder that is being submitted.
      * @return A Response entity with the Location Field set to the location of the new MedicalTestOrder
      * @throws URISyntaxException
      */
     @PostMapping
-    public ResponseEntity saveNewMedicalTest(@RequestBody @Valid MedicalTestOrder medicalTestOrder) throws URISyntaxException {
+    public ResponseEntity saveNewMedicalTestOrder(@RequestBody @Valid MedicalTestOrderDto medicalTestOrderDto)
+            throws URISyntaxException {
+
+        MedicalTestOrder medicalTestOrder = medicalTestOrderMapper
+                .medicalTestOrderDtoToMedicalTestOrder(medicalTestOrderDto);
 
         try {
             medicalTestOrderService.saveMedicalTestOrder(medicalTestOrder);
