@@ -6,8 +6,10 @@ package com.shiffler.AcmeTestingCenter.service;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestRepository;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +18,19 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@Data
 public class MedicalTestServiceImpl implements MedicalTestService {
 
     private final MedicalTestRepository medicalTestRepository;
+
+    @Value("${defaultQuantityToOrder}")
+    int defaultQuantityToOrder;
+
+    @Value("${defaultQuantityOnHand}")
+    int defaultQuantityOnHand;
+
+    @Value("${defaultMinOnHand}")
+    int defaultMinOnHand;
 
     @Autowired
     MedicalTestServiceImpl(MedicalTestRepository medicalTestRepository){
