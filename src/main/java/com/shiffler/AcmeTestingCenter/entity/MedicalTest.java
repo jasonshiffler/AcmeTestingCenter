@@ -71,5 +71,10 @@ public class MedicalTest {
     @Column(name="test_code")
     private String testCode;
 
+    @Min(value=0)
+    private Float cost;
+
+    @Min(value=0)
+    private Float price;
 
 }

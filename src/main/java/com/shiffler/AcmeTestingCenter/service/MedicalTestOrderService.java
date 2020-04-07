@@ -14,4 +14,5 @@ public interface MedicalTestOrderService {
     Optional<MedicalTestOrder> getMedicalTestOrderById(UUID id);
     MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder);
     void processMedicalTestOrders();
+    void processTests();
 }

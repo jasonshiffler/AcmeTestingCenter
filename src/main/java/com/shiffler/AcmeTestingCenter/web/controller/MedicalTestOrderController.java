@@ -38,6 +38,8 @@ public class MedicalTestOrderController {
     public ResponseEntity<MedicalTestOrder> getMedicalTestOrderById(@PathVariable("id") UUID id){
 
         Optional<MedicalTestOrder> optionalMedicalTestOrder = medicalTestOrderService.getMedicalTestOrderById(id);
+
+
         return new ResponseEntity<MedicalTestOrder>(optionalMedicalTestOrder.get(), HttpStatus.OK);
     }
 

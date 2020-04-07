@@ -5,12 +5,13 @@ import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOrder, UUID> {
 
 
     @Query("select m from MedicalTestOrder m where m.testOrderStatus = ?1")
-    Iterable<MedicalTestOrder> findByOrderStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum);
+    List<MedicalTestOrder> findByOrderStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum);
 
 }

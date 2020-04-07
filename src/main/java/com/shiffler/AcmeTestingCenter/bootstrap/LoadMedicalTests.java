@@ -15,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.IntStream;
 
 @Component
 public class LoadMedicalTests implements CommandLineRunner {
@@ -52,10 +53,11 @@ public class LoadMedicalTests implements CommandLineRunner {
 
         medicalTestOrderService.processMedicalTestOrders();
 
+        //Process all of the tests by setting the test result and the order status
+        medicalTestOrderService.processTests();
+
     }
 
-
-    @Transactional
     public void createTests(){
 
             medicalTestService.saveMedicalTest(MedicalTest.builder()
@@ -63,6 +65,8 @@ public class LoadMedicalTests implements CommandLineRunner {
                     .minOnHand(10)
                     .quantityOnHand(15)
                     .quantityToOrder(10)
+                    .price(1.25f)
+                    .cost(.25f)
                     .testCode("00000A0001")
                     .build()
             );
@@ -72,6 +76,8 @@ public class LoadMedicalTests implements CommandLineRunner {
                     .minOnHand(200)
                     .quantityOnHand(400)
                     .quantityToOrder(300)
+                    .price(5.75f)
+                    .cost(2.05f)
                     .testCode("00000A0002")
                     .build()
             );
@@ -81,6 +87,8 @@ public class LoadMedicalTests implements CommandLineRunner {
                 .minOnHand(5)
                 .quantityOnHand(10)
                 .quantityToOrder(10)
+                .price(3.17f)
+                .cost(1.25f)
                 .testCode("00000A0003")
                 .build()
         );
@@ -90,17 +98,22 @@ public class LoadMedicalTests implements CommandLineRunner {
                 .minOnHand(10)
                 .quantityOnHand(14)
                 .quantityToOrder(10)
+                .price(10.25f)
+                .cost(6.25f)
                 .testCode("00000A0004")
                 .build()
         );
     }
 
-    @Transactional
     public void createOrders() {
+
+        IntStream.rangeClosed(1,1000).forEach( s ->
+                {
         MedicalTestOrder order = MedicalTestOrder.builder()
                 .testCode("00000A0003")
                 .testOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED)
                 .build();
-        medicalTestOrderService.saveMedicalTestOrder(order);
+        medicalTestOrderService.saveMedicalTestOrder(order);}
+        );
     }
 }
