@@ -8,7 +8,6 @@ import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -103,7 +102,6 @@ public class MedicalTestServiceImpl implements MedicalTestService {
     /**
      * Log tests that are below their minimum inventory level
      */
-    //@Scheduled(cron = " 10,20,30,40,50 * * * * *")
     public void logLowInventoryMedicalTests(){
 
         //Find tests that are below their minimum inventory
@@ -130,8 +128,6 @@ public class MedicalTestServiceImpl implements MedicalTestService {
     /**
      * Add inventory to Medical Tests that are running low
      */
-    //@Scheduled(cron = " 30 * * * * *")
-
     public void addStockToMedicalTests(){
         List<MedicalTest> lowTests = medicalTestRepository.findByTestLessThanMinOnHand();
         lowTests.stream().forEach(medicalTest -> {

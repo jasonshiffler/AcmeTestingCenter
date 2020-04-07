@@ -49,7 +49,7 @@ public class MedicalTestOrder {
 
     @Column(name="test_status")
     @Enumerated(EnumType.STRING)  //Populates the database with the String value instead of a number
-    private MedicalTestStatusEnum testStatus;
+    private MedicalTestOrderStatusEnum testOrderStatus;
 
 
     @Column(name="medical_test_result")

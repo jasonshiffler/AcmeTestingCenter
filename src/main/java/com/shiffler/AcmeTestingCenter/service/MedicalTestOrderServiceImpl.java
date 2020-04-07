@@ -1,15 +1,15 @@
 package com.shiffler.AcmeTestingCenter.service;
 
+import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestResultEnum;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestStatusEnum;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestOrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +39,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
     }
 
     /**
-     * Saves orders for medical tests to the repository
+     * Saves orders for medical tests to the repository so they can be processed
      * @param medicalTestOrder - Describes the medical test being ordered
      * @return - A copy of the order being saved
      * @throws NoSuchElementException
@@ -51,28 +51,15 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
         String testCode = medicalTestOrder.getTestCode();
 
-        //Check to see if the testcode that was passed in is valid
-        if (medicalTestService.verifyTestCode(testCode)) {
+        //Check to see if the testcode that was passed in is valid and if its a new order
+        if (medicalTestService.verifyTestCode(testCode) && medicalTestOrder.getId() == null) {
+           medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED);
+           medicalTestOrder.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
+           return medicalTestOrderRepository.save(medicalTestOrder);
+        }
 
-
-            //Retrieve the record for the specific Medical test so we can determine the inventory
-            Optional<MedicalTest> optionalMedicalTest = medicalTestService.getMedicalTestByTestCode(testCode);
-            MedicalTest medicalTest = optionalMedicalTest.get();
-
-            //If there are tests on hand decrement the value available by one
-            if (medicalTest.getQuantityOnHand() > 0){
-
-                medicalTest.setQuantityOnHand(medicalTest.getQuantityOnHand() - 1);
-                medicalTestService.saveMedicalTest(medicalTest);
-                medicalTestOrder.setTestStatus(MedicalTestStatusEnum.ORDER_RECEIVED);
-            }
-            else {
-                //If there are not tests on hand accept the order but set its status to on hold
-                medicalTestOrder.setTestStatus(MedicalTestStatusEnum.ORDER_RECEIVED_ONHOLD);
-            }
-
-            //Set the result status and save the order
-            medicalTestOrder.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
+        //Don't update status for existing orders
+        else if(medicalTestService.verifyTestCode(testCode) && medicalTestOrder.getId() != null){
             return medicalTestOrderRepository.save(medicalTestOrder);
         }
 
@@ -85,19 +72,71 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
     }
 
     /**
-     * Updates num tests so that their status goes from being ORDER_RECEIVED_ONHOLD to TEST_IN_PROCESS.
-     * The intention of this method is that when new testkit inventory are recieved a certain number of testorders
-     * are taken off of hold status
-     * @param num - The number of testsorders
-     * @param testCode - which testCode to update
-     *
-     *
-     * @return
+     * Looks at all of the Medical Test orders that have been received. If the test is in ORDER_RECEIVED status it
+     * will be put on hold if there are insufficient test kits or set to test in process of there is an available kit.
      */
-    @Override
-    public List<MedicalTestOrder> updateOrderStatusOnHoldToTestInProcess(String testCode, int num) {
-        return null;
+    public void processMedicalTestOrders(){
+        log.info("Processing Medical Test Orders");
+
+        //Process the on hold orders first
+        processOrdersByStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED_ONHOLD);
+        processOrdersByStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED);
     }
 
+    /**
+     * Look at all of the MedicalTestOrders with a specified status. If there are available tests set those
+     * tests to be in process. If not set them to be on hold. We want to allow this to be done by status so
+     * that orders maybe prioritized by status
+     * @param medicalTestOrderStatusEnum
+     */
+    @Transactional(rollbackFor = Exception.class) //Don't allow transactions to complete if there are any Exceptions
+    private void processOrdersByStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum){
+
+        log.info("Processing Medical Test Orders with Status {}", medicalTestOrderStatusEnum);
+
+        //Search for all Medical Tests of a specified status
+        Iterable<MedicalTestOrder> medicalTestOrderIterable = medicalTestOrderRepository
+                .findByOrderStatus(medicalTestOrderStatusEnum);
+
+        //For each MedicalTestOrder
+
+        for (MedicalTestOrder medicalTestOrder: medicalTestOrderIterable) {
+
+            log.info("Processing order {}", medicalTestOrder.toString());
+
+            //Retrieve the Medical Test that matches the testcode
+            String testCode = medicalTestOrder.getTestCode();
+            Optional<MedicalTest> optionalMedicalTest = medicalTestService.getMedicalTestByTestCode(testCode);
+            MedicalTest medicalTest = optionalMedicalTest.get();
+
+            //If there are available tests set the test to be in process and decrement the number of available tests
+            if (medicalTest.getQuantityOnHand() > 0){
+                log.info("Medical Tester Order set to TEST_IN_PROCESS Status");
+
+                medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.TEST_IN_PROCESS);
+                saveMedicalTestOrder(medicalTestOrder);
+
+                medicalTest.setQuantityOnHand(medicalTest.getQuantityOnHand() - 1);
+                log.info("Medical test {} has {} testkits remaining"
+                        , medicalTest.getTestName(), medicalTest.getQuantityOnHand());
+                medicalTestService.saveMedicalTest(medicalTest);
+                return;
+
+            }
+            //If there are no available tests
+            else if (medicalTestOrder.getTestOrderStatus() == MedicalTestOrderStatusEnum.ORDER_RECEIVED){
+                log.info("Medical Test Inventory Depleted Order Status Set to ORDER_RECEIVED_ONHOLD");
+                medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED_ONHOLD);
+                saveMedicalTestOrder(medicalTestOrder);
+                return;
+            }
+            else if (medicalTestOrder.getTestOrderStatus() == MedicalTestOrderStatusEnum.ORDER_RECEIVED_ONHOLD){
+                log.info("Medical Test Inventory Depleted Order Status remains at to ORDER_RECEIVED_ONHOLD");
+                return;
+            }
+
+        } //close for
+
+    } //close method
 
 }

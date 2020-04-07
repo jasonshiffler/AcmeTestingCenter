@@ -7,9 +7,8 @@ package com.shiffler.AcmeTestingCenter.bootstrap;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestStatusEnum;
-import com.shiffler.AcmeTestingCenter.repository.MedicalTestOrderRepository;
-import com.shiffler.AcmeTestingCenter.repository.MedicalTestRepository;
+
+import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class LoadMedicalTests implements CommandLineRunner {
     }
 
     @Scheduled(cron = " 30 * * * * *")
-    private void programFlow(){
+    public void programFlow(){
 
         //Log the current status of Medical Test Kit Inventory
         medicalTestService.logLowInventoryMedicalTests();
@@ -50,6 +49,8 @@ public class LoadMedicalTests implements CommandLineRunner {
 
         //Look through Medical Test Orders that are on hold due to lack of inventory
         //If there are testkits that are now available change the status and update the testkit inventory
+
+        medicalTestOrderService.processMedicalTestOrders();
 
     }
 
@@ -98,7 +99,7 @@ public class LoadMedicalTests implements CommandLineRunner {
     public void createOrders() {
         MedicalTestOrder order = MedicalTestOrder.builder()
                 .testCode("00000A0003")
-                .testStatus(MedicalTestStatusEnum.ORDER_RECEIVED)
+                .testOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED)
                 .build();
         medicalTestOrderService.saveMedicalTestOrder(order);
     }
