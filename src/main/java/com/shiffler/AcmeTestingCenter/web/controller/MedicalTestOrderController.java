@@ -34,6 +34,7 @@ public class MedicalTestOrderController {
         this.medicalTestOrderMapper = medicalTestOrderMapper;
     }
 
+
     /**
      * Allows a MedicalTest Order to be retrieved by the id. Returns a Dto object to hide fields that the end user
      * doesn't need to see.
@@ -41,7 +42,7 @@ public class MedicalTestOrderController {
      * @return - The Medical Test Order in JSON format
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalTestOrderDto> getMedicalTestOrderById(@PathVariable("id") UUID id){
+    public ResponseEntity<MedicalTestOrderDto> getMedicalTestOrderById(@PathVariable("id") Long id){
 
         Optional<MedicalTestOrder> optionalMedicalTestOrder = medicalTestOrderService.getMedicalTestOrderById(id);
 
@@ -51,6 +52,7 @@ public class MedicalTestOrderController {
 
         return new ResponseEntity<MedicalTestOrderDto>(medicalTestOrderDto, HttpStatus.OK);
     }
+
 
     /**
      * Allows requests to be made for new Medical Test Orders
