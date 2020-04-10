@@ -6,6 +6,6 @@ package com.shiffler.AcmeTestingCenter.entity;
 
 public enum MedicalTestOrderStatusEnum {
 
-    ORDER_RECEIVED,ORDER_RECEIVED_ONHOLD, TEST_IN_PROCESS, COMPLETE
+    ORDER_PLACED,ORDER_PLACED_ONHOLD, TEST_IN_PROCESS, COMPLETE
 
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public interface MedicalTestOrderService {
 
-    Optional<MedicalTestOrder> getMedicalTestOrderById(UUID id);
+    Optional<MedicalTestOrder> getMedicalTestOrderById(Long id);
     MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder);
     void processMedicalTestOrders();
     void processTests();

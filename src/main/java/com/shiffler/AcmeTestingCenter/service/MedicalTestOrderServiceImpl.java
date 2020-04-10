@@ -42,7 +42,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
      * @return An Optional of the MedicalTestOrder that matches the id
      */
     @Override
-    public Optional<MedicalTestOrder> getMedicalTestOrderById(UUID id) {
+    public Optional<MedicalTestOrder> getMedicalTestOrderById(Long id) {
         return medicalTestOrderRepository.findById(id);
     }
 
@@ -62,7 +62,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
         //Check to see if the testcode that was passed in is valid and if its a new order
         if (medicalTestService.verifyTestCode(testCode) && medicalTestOrder.getId() == null) {
-           medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED);
+           medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED);
            medicalTestOrder.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
            return medicalTestOrderRepository.save(medicalTestOrder);
         }
@@ -89,8 +89,8 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         log.info("Processing Medical Test Orders");
 
         //Process the on hold orders first
-        processOrdersByStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED_ONHOLD);
-        processOrdersByStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED);
+        processOrdersByStatus(MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD);
+        processOrdersByStatus(MedicalTestOrderStatusEnum.ORDER_PLACED);
     }
 
     /**
@@ -137,7 +137,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         if (medicalTest.getQuantityOnHand() > 0){
             log.info("Medical Tester Order set to TEST_IN_PROCESS Status");
 
-            medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.TEST_IN_PROCESS);
+            medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.TEST_IN_PROCESS);
             saveMedicalTestOrder(medicalTestOrder);
 
             medicalTest.setQuantityOnHand(medicalTest.getQuantityOnHand() - 1);
@@ -147,14 +147,14 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         }
 
         //If there are no available tests
-        else if (medicalTestOrder.getTestOrderStatus() == MedicalTestOrderStatusEnum.ORDER_RECEIVED){
-            log.info("Medical Test Inventory Depleted Order Status Set to ORDER_RECEIVED_ONHOLD");
-            medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED_ONHOLD);
+        else if (medicalTestOrder.getTestOrderStatusEnum() == MedicalTestOrderStatusEnum.ORDER_PLACED){
+            log.info("Medical Test Inventory Depleted Order Status Set to ORDER_PLACED_ONHOLD");
+            medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD);
             saveMedicalTestOrder(medicalTestOrder);
 
         }
-        else if (medicalTestOrder.getTestOrderStatus() == MedicalTestOrderStatusEnum.ORDER_RECEIVED_ONHOLD){
-            log.info("Medical Test Inventory Depleted Order Status remains at to ORDER_RECEIVED_ONHOLD");
+        else if (medicalTestOrder.getTestOrderStatusEnum() == MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD){
+            log.info("Medical Test Inventory Depleted Order Status remains at to ORDER_PLACED_ONHOLD");
 
         }
 
@@ -177,12 +177,12 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         //Iterate over the results, set the test result status and mark the order status to be complete
         medicalTestOrderIterable.forEach( medicalTestOrder -> {
             medicalTestOrder.setMedicalTestResultEnum(generateRandomMedicalTestResult());
-            medicalTestOrder.setTestOrderStatus(MedicalTestOrderStatusEnum.COMPLETE);
+            medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.COMPLETE);
             log.info(medicalTestOrder.getId()
                     + " "
                     + medicalTestOrder.getTestCode()
                     + " is now "
-                    + medicalTestOrder.getTestOrderStatus());
+                    + medicalTestOrder.getTestOrderStatusEnum());
             log.info(medicalTestOrder.getId()
                     + " "
                     + medicalTestOrder.getTestCode()

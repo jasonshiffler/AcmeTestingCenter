@@ -111,7 +111,7 @@ public class LoadMedicalTests implements CommandLineRunner {
                 {
         MedicalTestOrder order = MedicalTestOrder.builder()
                 .testCode("00000A0003")
-                .testOrderStatus(MedicalTestOrderStatusEnum.ORDER_RECEIVED)
+                .testOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED)
                 .build();
         medicalTestOrderService.saveMedicalTestOrder(order);}
         );

@@ -8,11 +8,11 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOrder, UUID> {
+public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOrder, Long> {
 
 
     //Find a Medical Test Order with a particular order status
-    @Query("select m from MedicalTestOrder m where m.testOrderStatus = ?1")
+    @Query("select m from MedicalTestOrder m where m.testOrderStatusEnum = ?1")
     List<MedicalTestOrder> findByOrderStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum);
 
 }
