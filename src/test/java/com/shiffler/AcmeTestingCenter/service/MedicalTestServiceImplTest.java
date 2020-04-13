@@ -118,7 +118,7 @@ class MedicalTestServiceImplTest {
     void verifyTestCode() {
 
         //When
-        medicalTestService.verifyTestCode(anyString());
+        medicalTestService.isValidTestCode(anyString());
 
         //Then
         then(medicalTestRepository).should().findByTestCode(anyString());

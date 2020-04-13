@@ -13,7 +13,7 @@ public interface MedicalTestService {
 
     Optional<MedicalTest> getMedicalTestById(UUID uuid);
     void saveMedicalTest(MedicalTest medicalTest);
-    boolean verifyTestCode(String testCode);
+    boolean isValidTestCode(String testCode);
     Iterable<MedicalTest> getAllMedicalTests();
     Optional<MedicalTest> getMedicalTestByTestCode(String testCode);
     void logLowInventoryMedicalTests();

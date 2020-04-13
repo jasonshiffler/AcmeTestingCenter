@@ -105,7 +105,7 @@ public class MedicalTestServiceImpl implements MedicalTestService {
      * @param testCode - The Medical test code
      * @return true if their is a MedicalTest with that testcode, false if there isn't
      */
-    public boolean verifyTestCode(String testCode){
+    public boolean isValidTestCode(String testCode){
         Optional<MedicalTest> optionalMedicalTest = medicalTestRepository.findByTestCode(testCode);
         log.info("Test code is valid: {} ", optionalMedicalTest.isPresent());
         return optionalMedicalTest.isPresent();

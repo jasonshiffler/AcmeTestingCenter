@@ -61,21 +61,20 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         String testCode = medicalTestOrder.getTestCode();
 
         //Check to see if the testcode that was passed in is valid and if its a new order
-        if (medicalTestService.verifyTestCode(testCode) && medicalTestOrder.getId() == null) {
+        if (medicalTestService.isValidTestCode(testCode) && medicalTestOrder.getId() == null) {
            medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED);
            medicalTestOrder.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
            return medicalTestOrderRepository.save(medicalTestOrder);
         }
 
         //Don't update status for existing orders
-        else if(medicalTestService.verifyTestCode(testCode) && medicalTestOrder.getId() != null){
+        else if(medicalTestService.isValidTestCode(testCode) && medicalTestOrder.getId() != null){
             return medicalTestOrderRepository.save(medicalTestOrder);
         }
 
         //if the test code isn't valid
         else {
-            log.error("Medical Test order used invalid test code {} ", medicalTestOrder.getId().toString() +
-                    medicalTestOrder.getTestCode().toString());
+            log.error("Medical Test order used invalid test code {} ", medicalTestOrder.toString());
             throw new NoSuchElementException("The medical test code does not exist");
         }
     }
@@ -100,7 +99,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
      * @param medicalTestOrderStatusEnum
      */
 
-    private void processOrdersByStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum){
+    public void processOrdersByStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum){
 
         log.info("Processing Medical Test Orders with Status {}", medicalTestOrderStatusEnum);
 
@@ -124,7 +123,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
      *
      */
     @Transactional(rollbackFor = Exception.class) //Don't allow transactions to complete if there are any Exceptions
-    private void processOneOrderByStatus(MedicalTestOrder medicalTestOrder)    {
+    public void processOneOrderByStatus(MedicalTestOrder medicalTestOrder)    {
 
         log.info("Processing order {}", medicalTestOrder.toString());
 
