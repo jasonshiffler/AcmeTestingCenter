@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Service
 @Slf4j
@@ -110,7 +110,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         //For each MedicalTestOrder
 
         for (MedicalTestOrder medicalTestOrder: medicalTestOrderList) {
-            processOneOrderByStatus(medicalTestOrder);
+            processOrder(medicalTestOrder);
 
         } //close for
 
@@ -118,18 +118,26 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
 
     /**
-     * Handles the processing of a single order so a single order can be done as a transaction.
+     * Handles the processing of a single order so a single order can be done as a transaction. The orders have to
+     * be processed first before a Medical Test can be run against the order.
      * @param medicalTestOrder - The Medical Test Order that's being processed
      *
      */
     @Transactional(rollbackFor = Exception.class) //Don't allow transactions to complete if there are any Exceptions
-    public void processOneOrderByStatus(MedicalTestOrder medicalTestOrder)    {
+    public void processOrder(MedicalTestOrder medicalTestOrder)    {
 
         log.info("Processing order {}", medicalTestOrder.toString());
 
         //Retrieve the Medical Test that matches the testcode
         String testCode = medicalTestOrder.getTestCode();
         Optional<MedicalTest> optionalMedicalTest = medicalTestService.getMedicalTestByTestCode(testCode);
+
+        //The test code should return but if it doesn't there is a problem.
+        if (optionalMedicalTest.isEmpty()){
+            log.error( "Expected Medical Test with code: {} but found none" ,testCode);
+            throw new NoSuchElementException("Expected Medical Test with code: " + testCode + " but found none");
+        }
+
         MedicalTest medicalTest = optionalMedicalTest.get();
 
         //If there are available tests set the test to be in process and decrement the number of available tests
@@ -152,6 +160,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
             saveMedicalTestOrder(medicalTestOrder);
 
         }
+        //If it was already on hold and there still aren't any tests, no need to save
         else if (medicalTestOrder.getTestOrderStatusEnum() == MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD){
             log.info("Medical Test Inventory Depleted Order Status remains at to ORDER_PLACED_ONHOLD");
 
@@ -162,6 +171,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
 
     /**
+     * The order has already been processed and now we want to run the actual "test" and determine the result.
      * Looks at all of the Medical Test Orders that are in TEST_IN_PROCESS status. "Runs the test" and then enters
      * the result and sets the status to COMPLETE
      */
