@@ -1,14 +1,15 @@
+//These are integration tests for the MedicalTestOrder Controller.
+//All dependencies of this class are mocked to keep it as light weight as possible.
+
 package com.shiffler.AcmeTestingCenter.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestResultEnum;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
-import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestMapper;
 import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestOrderMapper;
-import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestOrderMapperImpl;
 import com.shiffler.AcmeTestingCenter.web.model.MedicalTestOrderDto;
-import javafx.util.converter.BigDecimalStringConverter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,19 +20,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import static org.hamcrest.core.Is.is;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.reset;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(MedicalTestOrderController.class)
 class MedicalTestOrderControllerTest {
@@ -47,9 +47,12 @@ class MedicalTestOrderControllerTest {
 
     MedicalTestOrder medicalTestOrder;
     MedicalTestOrderDto medicalTestOrderDto;
+    MedicalTestOrderDto medicalTestOrderDto1;
 
     @BeforeEach
     void init(){
+
+        //Initialize Objects that will be used as part of our testing
 
         medicalTestOrder = new MedicalTestOrder();
         medicalTestOrder.setId(1000000000L);
@@ -62,13 +65,19 @@ class MedicalTestOrderControllerTest {
         medicalTestOrderDto.setTestCode("00000A0002");
         medicalTestOrderDto.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
         medicalTestOrderDto.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED);
+
+        medicalTestOrderDto1 = new MedicalTestOrderDto();
+        medicalTestOrderDto1.setId(1000000000L);
+        medicalTestOrderDto1.setTestCode("00000A0002");
+        medicalTestOrderDto1.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
+        medicalTestOrderDto1.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED);
+
     }
 
     @AfterEach
     void tearDown(){
         reset(medicalTestOrderService);
     }
-
 
     @Test
     //Need to add the id in, had trouble formatting correctly
@@ -86,7 +95,6 @@ class MedicalTestOrderControllerTest {
                 .medicalTestOrderToMedicalTestOrderDto(Optional.of(medicalTestOrder)
                         .get())).willReturn(medicalTestOrderDto);
 
-
         //The casting of l to int,makes the formatting turnout correctly
         //need to figure out a workaround
         long longId = medicalTestOrderDto.getId();
@@ -95,9 +103,7 @@ class MedicalTestOrderControllerTest {
 
       MvcResult result = mockMvc
               .perform(get("/api/v1/medicaltestorder/" + medicalTestOrder.getId()))
-
       //Then
-
               .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
               .andExpect(jsonPath("$.id", is((int) longId)))
               .andExpect(jsonPath("$.testCode", is(medicalTestOrderDto.getTestCode())))
@@ -121,6 +127,30 @@ class MedicalTestOrderControllerTest {
     }
 
     @Test
-    void saveNewMedicalTestOrder() {
-    }
-}
+    @DisplayName("Test saveNewMedicalTestOrder() - With a valid MedicalTestOrder")
+    void saveNewMedicalTestOrder() throws Exception {
+
+        //Given - We're mocking the mapper so we have to "map" manually
+        given(medicalTestOrderMapper
+              .medicalTestOrderDtoToMedicalTestOrder(any()))
+                    .willReturn(medicalTestOrder);
+        given(medicalTestOrderService.saveMedicalTestOrder(medicalTestOrder)).willReturn(medicalTestOrder);
+
+        //When
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/v1/medicaltestorder")
+
+        //Then
+                 //Map the POJO to a JSON Format
+                .content(new ObjectMapper().writeValueAsString(medicalTestOrderDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated()).andReturn();
+
+        //Validate the location field tha we should get back that tells us the location of our new MedicalTestOrder
+        String headervalue = result.getResponse().getHeader("Location");
+        assertTrue(headervalue.equals("http://localhost:8081/1000000000"));
+
+    } //close method
+
+} //close class
