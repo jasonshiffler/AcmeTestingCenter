@@ -1,22 +1,17 @@
 /*
-Performs state initialization
+Initializes the program with the Medical Tests that are available.
  */
 
 
 package com.shiffler.AcmeTestingCenter.bootstrap;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
-
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.IntStream;
 
 @Component
 public class LoadMedicalTests implements CommandLineRunner {
@@ -36,27 +31,8 @@ public class LoadMedicalTests implements CommandLineRunner {
     @Override
     public void run(String... args) {
         this.createTests();
-        this.createOrders();
     }
 
-    @Scheduled(cron = " 30 * * * * *")
-    public void programFlow(){
-
-        //Log the current status of Medical Test Kit Inventory
-        medicalTestService.logLowInventoryMedicalTests();
-
-        //Replenish depleted Medical Tests
-        medicalTestService.addStockToMedicalTests();
-
-        //Look through Medical Test Orders that are on hold due to lack of inventory
-        //If there are testkits that are now available change the status and update the testkit inventory
-
-        medicalTestOrderService.processMedicalTestOrders();
-
-        //Process all of the tests by setting the test result and the order status
-        medicalTestOrderService.processTests();
-
-    }
 
     public void createTests(){
 
@@ -103,17 +79,6 @@ public class LoadMedicalTests implements CommandLineRunner {
                 .testCode("00000A0004")
                 .build()
         );
-    }
+    } //close method
 
-    public void createOrders() {
-
-        IntStream.rangeClosed(1,2).forEach( s ->
-                {
-        MedicalTestOrder order = MedicalTestOrder.builder()
-                .testCode("00000A0003")
-                .testOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED)
-                .build();
-        medicalTestOrderService.saveMedicalTestOrder(order);}
-        );
-    }
-}
+} //close class
