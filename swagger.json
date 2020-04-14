@@ -1,3 +1,190 @@
 {
-  "swagger" : "2.0"
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "OpenAPI definition",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/jasonshiffler/AcmeTestingCenter/1.0.0"
+  }, {
+    "url" : "http://localhost:8081",
+    "description" : "Generated server url"
+  } ],
+  "paths" : {
+    "/api/v1/medicaltest" : {
+      "post" : {
+        "tags" : [ "medical-test-controller" ],
+        "operationId" : "saveNewMedicalTest",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MedicalTestDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medicaltest/{id}" : {
+      "get" : {
+        "tags" : [ "medical-test-controller" ],
+        "operationId" : "getMedicalTestById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MedicalTestDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medicaltest/" : {
+      "get" : {
+        "tags" : [ "medical-test-controller" ],
+        "operationId" : "getAllMedicalTests",
+        "responses" : {
+          "200" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medicaltestorder/{id}" : {
+      "get" : {
+        "tags" : [ "medical-test-order-controller" ],
+        "operationId" : "getMedicalTestOrderById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MedicalTestOrderDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/medicaltestorder" : {
+      "post" : {
+        "tags" : [ "medical-test-order-controller" ],
+        "operationId" : "saveNewMedicalTestOrder",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MedicalTestOrderDto"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "default response",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "MedicalTestDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "testName" : {
+            "type" : "string"
+          },
+          "quantityOnHand" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "testCode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MedicalTestOrderDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int64",
+            "readOnly" : true
+          },
+          "testCode" : {
+            "type" : "string"
+          },
+          "testOrderStatus" : {
+            "type" : "string",
+            "readOnly" : true,
+            "enum" : [ "ORDER_PLACED", "ORDER_PLACED_ONHOLD", "TEST_IN_PROCESS", "COMPLETE" ]
+          },
+          "medicalTestResult" : {
+            "type" : "string",
+            "readOnly" : true,
+            "enum" : [ "POSITIVE", "NEGATIVE", "WAITING_FOR_RESULT", "INCONCLUSIVE" ]
+          }
+        }
+      }
+    }
+  }
 }
