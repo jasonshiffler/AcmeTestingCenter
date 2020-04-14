@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/medicaltestorder")
+@RequestMapping("/api/v1/medicaltestorders")
 public class MedicalTestOrderController {
 
     private final MedicalTestOrderService medicalTestOrderService;
