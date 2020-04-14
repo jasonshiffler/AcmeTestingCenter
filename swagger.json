@@ -8,6 +8,9 @@
     "description" : "SwaggerHub API Auto Mocking",
     "url" : "https://virtserver.swaggerhub.com/jasonshiffler/AcmeTestingCenter/1.0.0"
   }, {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/"
+  }, {
     "url" : "http://localhost:8081",
     "description" : "Generated server url"
   } ],
