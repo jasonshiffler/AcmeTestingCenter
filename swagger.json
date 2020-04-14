@@ -11,6 +11,9 @@
     "description" : "SwaggerHub API Auto Mocking",
     "url" : "https://virtserver.swaggerhub.com/"
   }, {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/"
+  }, {
     "url" : "http://localhost:8081",
     "description" : "Generated server url"
   } ],
