@@ -65,10 +65,10 @@ public class MedicalTestServiceImpl implements MedicalTestService {
      * @param medicalTest
      */
     @Override
-    public void saveMedicalTest(MedicalTest medicalTest) {
+    public MedicalTest saveMedicalTest(MedicalTest medicalTest) {
 
         initializeMedicalTest(medicalTest);
-        medicalTestRepository.save(medicalTest);
+        return medicalTestRepository.save(medicalTest);
     }
 
     /**

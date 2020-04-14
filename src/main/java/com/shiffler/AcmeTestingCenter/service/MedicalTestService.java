@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface MedicalTestService {
 
     Optional<MedicalTest> getMedicalTestById(UUID uuid);
-    void saveMedicalTest(MedicalTest medicalTest);
+    MedicalTest saveMedicalTest(MedicalTest medicalTest);
     boolean isValidTestCode(String testCode);
     Iterable<MedicalTest> getAllMedicalTests();
     Optional<MedicalTest> getMedicalTestByTestCode(String testCode);

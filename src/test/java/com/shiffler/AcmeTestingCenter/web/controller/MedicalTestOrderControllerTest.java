@@ -92,8 +92,8 @@ class MedicalTestOrderControllerTest {
                 .willReturn(Optional.of(medicalTestOrder));
 
         given(medicalTestOrderMapper
-                .medicalTestOrderToMedicalTestOrderDto(Optional.of(medicalTestOrder)
-                        .get())).willReturn(medicalTestOrderDto);
+                .medicalTestOrderToMedicalTestOrderDto(medicalTestOrder))
+                .willReturn(medicalTestOrderDto);
 
         //The casting of l to int,makes the formatting turnout correctly
         //need to figure out a workaround
