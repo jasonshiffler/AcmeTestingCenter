@@ -150,4 +150,6 @@ public class MedicalTestServiceImpl implements MedicalTestService {
 
     } //close method
 
+
+
 }

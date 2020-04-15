@@ -102,7 +102,7 @@ class MedicalTestOrderControllerTest {
       //When
 
       MvcResult result = mockMvc
-              .perform(get("/api/v1/medicaltestorder/" + medicalTestOrder.getId()))
+              .perform(get("/api/v1/medicaltestorders/" + medicalTestOrder.getId()))
       //Then
               .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
               .andExpect(jsonPath("$.id", is((int) longId)))
@@ -122,7 +122,7 @@ class MedicalTestOrderControllerTest {
                 .getMedicalTestOrderById(anyLong()))
                 .willThrow(new NoSuchElementException());
 
-        MvcResult result = mockMvc.perform(get("/api/v1/medicaltestorder/" + medicalTestOrder.getId()))
+        MvcResult result = mockMvc.perform(get("/api/v1/medicaltestorders/" + medicalTestOrder.getId()))
                                 .andExpect(status().isNotFound()).andReturn();
     }
 
@@ -138,7 +138,7 @@ class MedicalTestOrderControllerTest {
 
         //When
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/v1/medicaltestorder")
+                .post("/api/v1/medicaltestorders")
 
         //Then
                  //Map the POJO to a JSON Format
@@ -149,7 +149,7 @@ class MedicalTestOrderControllerTest {
 
         //Validate the location field tha we should get back that tells us the location of our new MedicalTestOrder
         String headervalue = result.getResponse().getHeader("Location");
-        assertTrue(headervalue.equals("http://localhost:8081/1000000000"));
+        assertTrue(headervalue.equals("http://localhost:8081/api/v1/medicaltestorders/1000000000"));
 
     } //close method
 

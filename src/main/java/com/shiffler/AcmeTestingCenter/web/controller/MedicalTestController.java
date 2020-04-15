@@ -87,7 +87,7 @@ public class MedicalTestController {
 
         //Send a response
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(new URI("http://localhost:8081/api/v1/medicaltests" + medicalTest.getId()));
+        headers.setLocation(new URI("http://localhost:8081/api/v1/medicaltests/" + medicalTest.getId()));
 
         return new ResponseEntity(headers,HttpStatus.CREATED);
 

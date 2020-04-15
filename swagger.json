@@ -18,7 +18,7 @@
     "description" : "Generated server url"
   } ],
   "paths" : {
-    "/api/v1/medicaltest" : {
+    "/api/v1/medicaltests" : {
       "post" : {
         "tags" : [ "medical-test-controller" ],
         "operationId" : "saveNewMedicalTest",
@@ -46,7 +46,7 @@
         }
       }
     },
-    "/api/v1/medicaltest/{id}" : {
+    "/api/v1/medicaltests/{id}" : {
       "get" : {
         "tags" : [ "medical-test-controller" ],
         "operationId" : "getMedicalTestById",
@@ -73,7 +73,7 @@
         }
       }
     },
-    "/api/v1/medicaltest/" : {
+    "/api/v1/medicaltests/" : {
       "get" : {
         "tags" : [ "medical-test-controller" ],
         "operationId" : "getAllMedicalTests",
@@ -91,7 +91,7 @@
         }
       }
     },
-    "/api/v1/medicaltestorder/{id}" : {
+    "/api/v1/medicaltestorders/{id}" : {
       "get" : {
         "tags" : [ "medical-test-order-controller" ],
         "operationId" : "getMedicalTestOrderById",
@@ -118,7 +118,7 @@
         }
       }
     },
-    "/api/v1/medicaltestorder" : {
+    "/api/v1/medicaltestorders" : {
       "post" : {
         "tags" : [ "medical-test-order-controller" ],
         "operationId" : "saveNewMedicalTestOrder",
