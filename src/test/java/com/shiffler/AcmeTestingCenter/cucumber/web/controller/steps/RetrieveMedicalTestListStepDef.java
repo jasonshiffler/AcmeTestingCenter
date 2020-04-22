@@ -1,14 +1,15 @@
-package com.shiffler.AcmeTestingCenter.cucumber.web.controller.RetrieveMedicalTestList;
+package com.shiffler.AcmeTestingCenter.cucumber.web.controller.steps;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import com.shiffler.AcmeTestingCenter.web.controller.MedicalTestController;
 import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestMapper;
 import com.shiffler.AcmeTestingCenter.web.model.MedicalTestDto;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+
+import cucumber.api.java.Before;
+import cucumber.api.java.en.And;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
