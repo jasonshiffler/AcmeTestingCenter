@@ -66,6 +66,7 @@ class MedicalTestControllerTest {
         medicalTestDto1.setTestCode("00000A0001");
         medicalTestDto1.setId(UUID.fromString("cc3fabfa-f6ca-4fcb-a829-6b33a6d8bb3e"));
         medicalTestDto1.setQuantityOnHand(50);
+        medicalTestDto1.setPrice(4.25f);
 
         medicalTest2 = new MedicalTest();
         medicalTest2.setId(UUID.fromString("0276523c-de6d-43ae-a729-a501e28320dc"));
@@ -82,6 +83,7 @@ class MedicalTestControllerTest {
         medicalTestDto2.setTestCode("00000A0002");
         medicalTestDto2.setId(UUID.fromString("0276523c-de6d-43ae-a729-a501e28320dc"));
         medicalTestDto2.setQuantityOnHand(35);
+        medicalTestDto2.setPrice(4.25f);
 
         //This one is for the POST operation which doesn't allow an id or qty to be specified.
 
@@ -140,6 +142,7 @@ class MedicalTestControllerTest {
                 .andExpect(jsonPath("$.quantityOnHand", is(35)))
                 .andExpect(jsonPath("$.testCode", is("00000A0002")))
                 .andExpect(jsonPath("$.testName", is("Rapid Influenza Antigen")))
+                .andExpect(jsonPath("$.price", is(4.25)))
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -186,11 +189,13 @@ class MedicalTestControllerTest {
                 .andExpect(jsonPath("$[0].quantityOnHand", is(50)))
                 .andExpect(jsonPath("$[0].testCode", is("00000A0001")))
                 .andExpect(jsonPath("$[0].testName", is("SARS-CoV-2")))
+                .andExpect(jsonPath("$[0].price", is(4.25)))
 
                 .andExpect(jsonPath("$[1].id", is("0276523c-de6d-43ae-a729-a501e28320dc")))
                 .andExpect(jsonPath("$[1].quantityOnHand", is(35)))
                 .andExpect(jsonPath("$[1].testCode", is("00000A0002")))
                 .andExpect(jsonPath("$[1].testName", is("Rapid Influenza Antigen")))
+                .andExpect(jsonPath("$[1].price", is(4.25)))
 
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

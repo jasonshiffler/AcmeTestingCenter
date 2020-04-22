@@ -7,6 +7,7 @@ package com.shiffler.AcmeTestingCenter.web.model;
 
 import lombok.Data;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Null;
 import java.util.UUID;
 
@@ -20,6 +21,8 @@ public class MedicalTestDto {
 
     @Null //Don't allow anyone using the API to change the quantity
     private Integer quantityOnHand;
+
+    private Float price;
 
     private String testCode;
 }
