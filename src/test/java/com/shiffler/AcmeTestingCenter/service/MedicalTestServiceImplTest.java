@@ -26,13 +26,18 @@ class MedicalTestServiceImplTest {
     @Mock
     MedicalTestRepository medicalTestRepository;
 
+    @Mock
+    MedicalTestOrderService medicalTestOrderService;
+
     @InjectMocks
     MedicalTestServiceImpl medicalTestService;
 
-    MedicalTest medicalTest1;
-    MedicalTest medicalTest2;
+    MedicalTest medicalTest1, medicalTest2;
+    MedicalTest medicalTest_AddStockToMedicalTests1; //This is to test the AddStockToMedicalTests method
 
     List<MedicalTest> medicalTestList;
+
+    List<MedicalTest> medicalTestList_AddStockToMedicalTests1; //This is to test the AddStockToMedicalTests method
 
     @BeforeEach
     public void init(){
@@ -47,8 +52,17 @@ class MedicalTestServiceImplTest {
         medicalTestList.add(medicalTest1);
         medicalTestList.add(medicalTest2);
 
-    }
 
+        //Initialization for AddStockToMedicalTests Tests
+        medicalTest_AddStockToMedicalTests1 = new MedicalTest();
+        medicalTest_AddStockToMedicalTests1.setMinOnHand(10);
+        medicalTest_AddStockToMedicalTests1.setQuantityOnHand(5);
+        medicalTest_AddStockToMedicalTests1.setQuantityToOrder(10);
+
+        medicalTestList_AddStockToMedicalTests1 = new ArrayList<>();
+        medicalTestList_AddStockToMedicalTests1.add(medicalTest_AddStockToMedicalTests1);
+
+    }
 
     @Test
     @DisplayName("Find Medical Test By Id")
@@ -130,12 +144,43 @@ class MedicalTestServiceImplTest {
     }
 
     @Test
-    @DisplayName("Add Stock to Medical Tests")
-    void addStockToMedicalTests() {
+    @DisplayName("Add Stock to Medical Tests - No Orders on Hold")
+    void addStockToMedicalTests_NoOrdersOnHold() {
+
+        //Given - medicalTestList_AddStockToMedicalTests1 is the list that contains the tests that are low on inventory
+        given(medicalTestRepository.findByTestLessThanMinOnHand()).willReturn(medicalTestList_AddStockToMedicalTests1);
+
+        //Given - We want to mock that there are no orders on hold
+        given(medicalTestOrderService.getTestCountByTestCodeAndStatus(any(),any())).willReturn(0L);
+
         //When
         medicalTestService.addStockToMedicalTests();
 
-        //Then
-        then(medicalTestRepository).should().findByTestLessThanMinOnHand();
+        //Then - The repository should save the updates
+        then(medicalTestRepository).should().save(medicalTest_AddStockToMedicalTests1);
+
+        //Then - qty on hand (5) should be added to the qty to order (10)
+        assertEquals(15,medicalTest_AddStockToMedicalTests1.getQuantityOnHand());
     }
+
+    @Test
+    @DisplayName("Add Stock to Medical Tests - Orders on Hold")
+    void addStockToMedicalTests_OrdersOnHold() {
+
+        //Given - medicalTestList_AddStockToMedicalTests1 is the list that contains the tests that are low on inventory
+        given(medicalTestRepository.findByTestLessThanMinOnHand()).willReturn(medicalTestList_AddStockToMedicalTests1);
+
+        //Given - We want to mock that there are 30 orders on hold
+        given(medicalTestOrderService.getTestCountByTestCodeAndStatus(any(),any())).willReturn(30L);
+
+        //When
+        medicalTestService.addStockToMedicalTests();
+
+        //Then - The repository should save the updates
+        then(medicalTestRepository).should().save(medicalTest_AddStockToMedicalTests1);
+
+        //Then - qty on hand (5) should be added amount to order with should be 36
+        assertEquals(41,medicalTest_AddStockToMedicalTests1.getQuantityOnHand());
+    }
+
 }

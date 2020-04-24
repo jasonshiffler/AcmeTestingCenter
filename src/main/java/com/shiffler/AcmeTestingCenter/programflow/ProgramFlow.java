@@ -9,13 +9,16 @@ This class controls the flow of the program by doing the following:
 
 package com.shiffler.AcmeTestingCenter.programflow;
 
+import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class ProgramFlow {
 
 
@@ -44,6 +47,14 @@ public class ProgramFlow {
 
         //Process all of the tests by setting the test result and the order status
         medicalTestOrderService.processTests();
+
+        //Provide current status
+        log.info("Number of tests on hold: {}", medicalTestOrderService
+                        .getTestCountByStatus(MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD));
+        log.info("Number of orders placed in process: {}",medicalTestOrderService
+                .getTestCountByStatus(MedicalTestOrderStatusEnum.ORDER_PLACED));
+        log.info("Number of tests complete: {}", medicalTestOrderService
+                .getTestCountByStatus(MedicalTestOrderStatusEnum.COMPLETE));
 
     }
 }

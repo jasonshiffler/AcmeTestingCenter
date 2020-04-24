@@ -15,4 +15,11 @@ public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOr
     @Query("select m from MedicalTestOrder m where m.testOrderStatusEnum = ?1")
     List<MedicalTestOrder> findByOrderStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum);
 
+    //Retrieve the count of all MedicalTestsOrders with a certain status.
+    long countByTestOrderStatusEnum(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum);
+
+    //Retrieve the count of MedicalTestsOrders with a certain status and testCode.
+    long countByTestOrderStatusEnumAndTestCode(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum,
+                                               String testCode);
+
 }

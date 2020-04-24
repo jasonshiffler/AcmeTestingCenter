@@ -56,7 +56,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
     @Override
     public MedicalTestOrder saveMedicalTestOrder(MedicalTestOrder medicalTestOrder) {
 
-        log.info(" New Medical Test Order being submitted for {}", medicalTestOrder.toString());
+        log.debug(" New Medical Test Order being submitted for {}", medicalTestOrder.toString());
 
         String testCode = medicalTestOrder.getTestCode();
 
@@ -126,7 +126,7 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
     @Transactional(rollbackFor = Exception.class) //Don't allow transactions to complete if there are any Exceptions
     public void processOrder(MedicalTestOrder medicalTestOrder)    {
 
-        log.info("Processing order {}", medicalTestOrder.toString());
+        log.debug("Processing order {}", medicalTestOrder.toString());
 
         //Retrieve the Medical Test that matches the testcode
         String testCode = medicalTestOrder.getTestCode();
@@ -142,27 +142,27 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
         //If there are available tests set the test to be in process and decrement the number of available tests
         if (medicalTest.getQuantityOnHand() > 0){
-            log.info("Medical Tester Order set to TEST_IN_PROCESS Status");
+            log.debug("Medical Tester Order set to TEST_IN_PROCESS Status");
 
             medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.TEST_IN_PROCESS);
             saveMedicalTestOrder(medicalTestOrder);
 
             medicalTest.setQuantityOnHand(medicalTest.getQuantityOnHand() - 1);
-            log.info("Medical test {} has {} testkits remaining"
+            log.debug("Medical test {} has {} testkits remaining"
                     , medicalTest.getTestName(), medicalTest.getQuantityOnHand());
             medicalTestService.saveMedicalTest(medicalTest);
         }
 
         //If there are no available tests
         else if (medicalTestOrder.getTestOrderStatusEnum() == MedicalTestOrderStatusEnum.ORDER_PLACED){
-            log.info("Medical Test Inventory Depleted Order Status Set to ORDER_PLACED_ONHOLD");
+            log.debug("Medical Test Inventory Depleted Order Status Set to ORDER_PLACED_ONHOLD");
             medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD);
             saveMedicalTestOrder(medicalTestOrder);
 
         }
         //If it was already on hold and there still aren't any tests, no need to save
         else if (medicalTestOrder.getTestOrderStatusEnum() == MedicalTestOrderStatusEnum.ORDER_PLACED_ONHOLD){
-            log.info("Medical Test Inventory Depleted Order Status remains at to ORDER_PLACED_ONHOLD");
+            log.debug("Medical Test Inventory Depleted Order Status remains at to ORDER_PLACED_ONHOLD");
 
         }
 
@@ -187,12 +187,12 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
         medicalTestOrderIterable.forEach( medicalTestOrder -> {
             medicalTestOrder.setMedicalTestResultEnum(generateRandomMedicalTestResult());
             medicalTestOrder.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.COMPLETE);
-            log.info(medicalTestOrder.getId()
+            log.debug(medicalTestOrder.getId()
                     + " "
                     + medicalTestOrder.getTestCode()
                     + " is now "
                     + medicalTestOrder.getTestOrderStatusEnum());
-            log.info(medicalTestOrder.getId()
+            log.debug(medicalTestOrder.getId()
                     + " "
                     + medicalTestOrder.getTestCode()
                     + " result is "
@@ -219,6 +219,29 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
             return MedicalTestResultEnum.POSITIVE;
         else
             return MedicalTestResultEnum.INCONCLUSIVE;
+    }
+
+    /**
+     * Provides the number of tests that are of a particular status,
+     * @param medicalTestOrderStatusEnum - The status that we want the count on
+     * @return The number of tests that are currently in the status that was passed in
+     */
+    public long getTestCountByStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum){
+
+        return medicalTestOrderRepository.countByTestOrderStatusEnum(medicalTestOrderStatusEnum);
+
+    }
+
+    /**
+     * For a certain testCode, provides the number of tests that are of a particular status
+     * @param medicalTestOrderStatusEnum
+     * @param testCode - The testCode we are searching on
+     * @return
+     */
+    public long getTestCountByTestCodeAndStatus(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum,
+                                                String testCode){
+        return medicalTestOrderRepository.countByTestOrderStatusEnumAndTestCode(medicalTestOrderStatusEnum,testCode);
+
     }
 
 
