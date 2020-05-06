@@ -244,5 +244,4 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
 
     }
 
-
 }

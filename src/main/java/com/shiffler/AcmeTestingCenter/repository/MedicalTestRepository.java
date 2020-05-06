@@ -35,4 +35,5 @@ public interface MedicalTestRepository extends CrudRepository<MedicalTest, UUID>
     @Query("select m from MedicalTest m where m.minOnHand > m.quantityOnHand")
     List<MedicalTest> findByTestLessThanMinOnHand();
 
+
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,6 +94,27 @@ public class MedicalTestServiceImpl implements MedicalTestService {
     public Iterable<MedicalTest> getAllMedicalTests() {
         return medicalTestRepository.findAll();
     }
+
+
+    /**
+     * Retrieves all of the Medical Tests and returns as a list
+     * @return A List of all available MedicalTests
+     */
+
+    public List<MedicalTest> getAllMedicalTestsAsList() {
+
+        List<MedicalTest> medicalTestList = new ArrayList<>();
+
+        for ( MedicalTest test : medicalTestRepository.findAll() )
+            medicalTestList.add(test);
+
+        return medicalTestList;
+
+    }
+
+
+
+
 
     /**
      * Sets initial values if certain fields of the MedicalTest haven't been set
