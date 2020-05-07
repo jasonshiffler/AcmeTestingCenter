@@ -6,26 +6,33 @@ Initializes the program with the Medical Tests that are available.
 package com.shiffler.AcmeTestingCenter.bootstrap;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
+import com.shiffler.AcmeTestingCenter.entity.User;
+import com.shiffler.AcmeTestingCenter.repository.UserRepository;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 
 @Component
-public class LoadMedicalTests implements CommandLineRunner {
+public class InitializeTestingCenter implements CommandLineRunner {
 
 
     private final MedicalTestService medicalTestService;
     private final MedicalTestOrderService medicalTestOrderService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public LoadMedicalTests(MedicalTestService medicalTestService,
-                            MedicalTestOrderService medicalTestOrderService){
+    public InitializeTestingCenter(MedicalTestService medicalTestService,
+                                   MedicalTestOrderService medicalTestOrderService,
+                                   UserRepository userRepository){
 
         this.medicalTestService = medicalTestService;
         this.medicalTestOrderService = medicalTestOrderService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -80,5 +87,21 @@ public class LoadMedicalTests implements CommandLineRunner {
                 .build()
         );
     } //close method
+
+    public void initializeUsers(){
+        User bob = new User("dan", "password", "USER", "");
+        User admin = new User("dan", "password", "ADMIN", "");
+
+        List<User> users = Arrays.asList(bob,admin);
+
+        this.userRepository.saveAll(users);
+
+
+        
+    }
+
+
+
+
 
 } //close class
