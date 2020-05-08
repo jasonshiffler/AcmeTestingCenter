@@ -2,6 +2,7 @@ package com.shiffler.AcmeTestingCenter.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
+import com.shiffler.AcmeTestingCenter.security.ApplicationSecurityConfig;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestMapper;
 import com.shiffler.AcmeTestingCenter.web.model.MedicalTestDto;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,11 +35,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = MedicalTestController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class )//Disable Security for testing purposes)
+        excludeAutoConfiguration = SecurityAutoConfiguration.class,
+        excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.foo.shiffler.AcmeTestingCenter.security.*")})//Disable Security for testing purposes)
 class MedicalTestControllerTest {
 
     @MockBean
     MedicalTestService medicalTestService;
+
+    @MockBean
+    UserDetailsService userDetailsService;
 
     @MockBean
     MedicalTestMapper medicalTestMapper;

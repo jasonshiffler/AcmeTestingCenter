@@ -12,6 +12,7 @@ import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -24,24 +25,30 @@ public class InitializeTestingCenter implements CommandLineRunner {
     private final MedicalTestService medicalTestService;
     private final MedicalTestOrderService medicalTestOrderService;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public InitializeTestingCenter(MedicalTestService medicalTestService,
                                    MedicalTestOrderService medicalTestOrderService,
-                                   UserRepository userRepository){
+                                   UserRepository userRepository, PasswordEncoder passwordEncoder){
 
         this.medicalTestService = medicalTestService;
         this.medicalTestOrderService = medicalTestOrderService;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public void run(String... args) {
-        this.createTests();
+        this.createMedicalTests();
+        this.initializeUsers();
     }
 
 
-    public void createTests(){
+    /**
+     * Create Medical Tests that users can order.
+     */
+    public void createMedicalTests(){
 
             medicalTestService.saveMedicalTest(MedicalTest.builder()
                     .testName("SARS-CoV-2")
@@ -88,20 +95,15 @@ public class InitializeTestingCenter implements CommandLineRunner {
         );
     } //close method
 
+    /**
+     * Add some users to the database that we can authenticate against
+     */
     public void initializeUsers(){
-        User bob = new User("dan", "password", "USER", "");
-        User admin = new User("dan", "password", "ADMIN", "");
-
+        User bob = new User("bob", passwordEncoder.encode("password"), "USER", "");
+        User admin = new User("admin", passwordEncoder.encode("password"), "ADMIN", "");
         List<User> users = Arrays.asList(bob,admin);
-
         this.userRepository.saveAll(users);
-
-
-        
     }
-
-
-
 
 
 } //close class

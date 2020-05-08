@@ -55,7 +55,7 @@ public class MedicalTestController {
      * Returns all of the available Medical Tests
      * @return
      */
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Iterable<MedicalTestDto>> getAllMedicalTests(){
 
         log.info("Web layer request to search for all available Medical tests");
