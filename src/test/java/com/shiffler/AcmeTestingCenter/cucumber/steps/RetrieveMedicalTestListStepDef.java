@@ -16,7 +16,11 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -32,8 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = MedicalTestController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@TestPropertySource(properties = {"isSecurityOn=false"}) //Turn off Security while testing
+@WebMvcTest(controllers = MedicalTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 public class RetrieveMedicalTestListStepDef {
 
     @Autowired
@@ -110,11 +114,17 @@ public class RetrieveMedicalTestListStepDef {
     }
 
 
+
     @When("^the client calls /medicaltests$")
     public void client_calls_medicaltests() throws Exception {
         MvcResult result = mockMvc
-                .perform(get("/api/v1/medicaltests/")).andReturn();
+              .perform(get("/api/v1/medicaltests")).andReturn();
+
+
+
+
     }
+
 
     @Then("^the client receives status code of 200$")
     public void client_receives_status_code_200() throws Exception {
@@ -129,12 +139,13 @@ public class RetrieveMedicalTestListStepDef {
 
         //When - Run the REST call against the controller
         MvcResult result = mockMvc
-                .perform(get("/api/v1/medicaltests/" ))
+                .perform(get("/api/v1/medicaltests" ))
 
                 //Then - Should return a status of ok
                 .andExpect(status().isOk())
                 .andReturn();
     }
+
 
     @And("^the client receives a list of the available medicaltests in JSON format$")
     public void client_receives_list_of_medicaltests() throws Exception {
@@ -149,7 +160,7 @@ public class RetrieveMedicalTestListStepDef {
 
         //When - Run the REST call against the controller
         MvcResult result = mockMvc
-                .perform(get("/api/v1/medicaltests/" ))
+                .perform(get("/api/v1/medicaltests" ))
 
                 //Then - Should be a list of values in JSON Format
 
@@ -167,7 +178,5 @@ public class RetrieveMedicalTestListStepDef {
 
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
-    }
-
-
-}
+    } //close method
+} //close class

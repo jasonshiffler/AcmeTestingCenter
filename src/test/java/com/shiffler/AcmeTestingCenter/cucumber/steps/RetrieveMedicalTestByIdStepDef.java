@@ -11,11 +11,16 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -30,8 +35,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = MedicalTestController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@TestPropertySource(properties = {"isSecurityOn=false"}) //Turn off Security while testing
+@WebMvcTest(controllers = MedicalTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 public class RetrieveMedicalTestByIdStepDef {
 
     @Autowired
@@ -51,7 +56,6 @@ public class RetrieveMedicalTestByIdStepDef {
     @Before //Need to use the Cucumber @Before in order to make this work
     //Must be public so it runs.
     public void init(){
-
 
         medicalTest1 = new MedicalTest();
         medicalTest1.setId(UUID.fromString("0276523c-de6d-43ae-a729-a501e28320dc"));
@@ -78,12 +82,14 @@ public class RetrieveMedicalTestByIdStepDef {
     }
 
 
+
+
     @When("^the client calls /medicaltests/good_id$")
     public void client_calls_medicaltests_with_good_id() throws Exception {
-
         MvcResult result = mockMvc
                 .perform(get("/api/v1/medicaltests/" + medicalTest1.getId())).andReturn();
     }
+
 
 
     @And("^the client receives a json representation of the medical test$")
@@ -115,6 +121,7 @@ public class RetrieveMedicalTestByIdStepDef {
                 .andReturn();
     }
 
+
     @When("^the client calls /medicaltests/bad_id$")
     public void theClientCallsMedicaltestsBad_id() throws Exception {
 
@@ -123,6 +130,7 @@ public class RetrieveMedicalTestByIdStepDef {
                 .perform(get("/api/v1/medicaltests/" + medicalTest1.getId())).andReturn();
 
     }
+
 
     @Then("^the client receives status code of 404$")
     public void theClientReceivesStatusCodeOf() throws Exception {

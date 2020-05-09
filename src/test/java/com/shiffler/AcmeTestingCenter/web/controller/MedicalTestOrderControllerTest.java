@@ -50,7 +50,7 @@ class MedicalTestOrderControllerTest {
 
     @MockBean
     UserDetailsService userDetailsService; //Spring Security is looking for a bean of this type and will not
-    //load without a userDetailsService available.
+                                           //load without a userDetailsService available.
 
     @Autowired
     MockMvc mockMvc;

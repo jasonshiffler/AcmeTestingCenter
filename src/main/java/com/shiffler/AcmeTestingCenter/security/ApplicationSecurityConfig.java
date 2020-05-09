@@ -1,6 +1,7 @@
 package com.shiffler.AcmeTestingCenter.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,10 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@ConditionalOnProperty(value="isSecurityOn", havingValue="true") //Allows us to turn off Security for testing
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService; //This service will provide the user info for authentication
+                                                         //and authorization
 
     @Autowired
     public ApplicationSecurityConfig(UserDetailsService userDetailsService) {
