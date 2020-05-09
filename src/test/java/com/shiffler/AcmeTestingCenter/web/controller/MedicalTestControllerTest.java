@@ -42,8 +42,8 @@ class MedicalTestControllerTest {
     MedicalTestService medicalTestService;
 
     @MockBean
-    UserDetailsService userDetailsService;
-
+    UserDetailsService userDetailsService; //Spring Security is looking for a bean of this type and will not
+                                           //load without a userDetailsService available.
     @MockBean
     MedicalTestMapper medicalTestMapper;
 

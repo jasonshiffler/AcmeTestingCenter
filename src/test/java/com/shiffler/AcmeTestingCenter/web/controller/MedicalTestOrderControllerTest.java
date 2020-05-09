@@ -22,6 +22,8 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -38,7 +40,6 @@ import static org.mockito.BDDMockito.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(controllers = MedicalTestOrderController.class)
-        //excludeAutoConfiguration = SecurityAutoConfiguration.class )//Disable Security for testing purposes
 class MedicalTestOrderControllerTest {
 
     @MockBean
@@ -46,6 +47,10 @@ class MedicalTestOrderControllerTest {
 
     @MockBean
     MedicalTestOrderMapper medicalTestOrderMapper;
+
+    @MockBean
+    UserDetailsService userDetailsService; //Spring Security is looking for a bean of this type and will not
+    //load without a userDetailsService available.
 
     @Autowired
     MockMvc mockMvc;
@@ -87,6 +92,7 @@ class MedicalTestOrderControllerTest {
     @Test
     //Need to add the id in, had trouble formatting correctly
     //The casting makes the formatting turnout correctly
+    @WithMockUser(roles={"ADMIN"}) //Allows us to run the test with Spring Security
     @DisplayName("Test getMedicalTestOrderById - Element is found")
     void getMedicalTestOrderById() throws Exception {
 
@@ -121,6 +127,7 @@ class MedicalTestOrderControllerTest {
     }
 
     @Test
+    @WithMockUser(roles={"ADMIN"}) //Allows us to run the test with Spring Security
     @DisplayName("Test getMedicalTestOrderByIdNotFound - Element isn't found")
     void getMedicalTestOrderByIdNotFound() throws Exception {
         given(medicalTestOrderService
@@ -132,6 +139,7 @@ class MedicalTestOrderControllerTest {
     }
 
     @Test
+    @WithMockUser(roles={"ADMIN"}) //Allows us to run the test with Spring Security
     @DisplayName("Test saveNewMedicalTestOrder() - With a valid MedicalTestOrder")
     void saveNewMedicalTestOrder() throws Exception {
 
