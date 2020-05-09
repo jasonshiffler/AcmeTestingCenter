@@ -18,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,9 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = MedicalTestController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class,
-        excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.foo.shiffler.AcmeTestingCenter.security.*")})//Disable Security for testing purposes)
+@WebMvcTest(controllers = MedicalTestController.class)
 class MedicalTestControllerTest {
 
     @MockBean
@@ -129,6 +128,7 @@ class MedicalTestControllerTest {
 
 
     @Test
+    @WithMockUser(roles={"ADMIN"}) //Allows us to run the test with Spring Security
     @DisplayName("Test getMedicalTestByIdFound - Element is found")
     void getMedicalTestById() throws Exception {
 
@@ -159,6 +159,7 @@ class MedicalTestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles={"ADMIN"})
     @DisplayName("Test getMedicalTestByIdNotFound - Element isn't found")
     void getMedicalTestByIdNotFound() throws Exception {
 
@@ -177,6 +178,7 @@ class MedicalTestControllerTest {
 
 
     @Test
+    @WithMockUser(roles={"ADMIN"})
     @DisplayName("getAllMedicalTests - Returns two elements")
     void getAllMedicalTests() throws Exception {
 
@@ -213,6 +215,7 @@ class MedicalTestControllerTest {
     }
 
     @Test
+    @WithMockUser(roles={"ADMIN"})
     @DisplayName("saveMedicalTest - Returns the location of the new test")
     void saveNewMedicalTest() throws Exception {
 
