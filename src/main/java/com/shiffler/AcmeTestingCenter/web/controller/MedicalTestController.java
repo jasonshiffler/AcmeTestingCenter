@@ -46,7 +46,8 @@ public class MedicalTestController {
         log.info("Web layer request to search for a MedicalTest by id: {}", id);
         Optional<MedicalTest> optionalMedicalTest = medicalTestService.getMedicalTestById(id);
         MedicalTestDto medicalTestDto = medicalTestMapper.medicalTestToMedicalTestDto(optionalMedicalTest.get());
-        return new ResponseEntity<MedicalTestDto>(medicalTestDto, HttpStatus.OK);
+       return new ResponseEntity<MedicalTestDto>(medicalTestDto, HttpStatus.OK);
+
 
     } //close method
 

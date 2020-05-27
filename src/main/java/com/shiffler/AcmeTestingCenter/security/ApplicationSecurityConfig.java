@@ -52,7 +52,6 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/**").hasRole("ADMIN")
                 .and()
                 .httpBasic();
-
     }
 
     /**
