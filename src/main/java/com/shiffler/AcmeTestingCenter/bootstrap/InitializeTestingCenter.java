@@ -6,10 +6,12 @@ Initializes the program with the Medical Tests that are available.
 package com.shiffler.AcmeTestingCenter.bootstrap;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
+import com.shiffler.AcmeTestingCenter.entity.Organization;
 import com.shiffler.AcmeTestingCenter.entity.User;
 import com.shiffler.AcmeTestingCenter.repository.UserRepository;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestService;
+import com.shiffler.AcmeTestingCenter.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,16 +28,21 @@ public class InitializeTestingCenter implements CommandLineRunner {
     private final MedicalTestOrderService medicalTestOrderService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final OrganizationService organizationService;
+
 
     @Autowired
     public InitializeTestingCenter(MedicalTestService medicalTestService,
                                    MedicalTestOrderService medicalTestOrderService,
-                                   UserRepository userRepository, PasswordEncoder passwordEncoder){
+                                   UserRepository userRepository,
+                                   PasswordEncoder passwordEncoder,
+                                   OrganizationService organizationService){
 
         this.medicalTestService = medicalTestService;
         this.medicalTestOrderService = medicalTestOrderService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.organizationService = organizationService;
     }
 
     @Override
@@ -95,12 +102,25 @@ public class InitializeTestingCenter implements CommandLineRunner {
         );
     } //close method
 
+    /*
+    Create organizations that can use the service
+     */
+    public void initializeOrganizations(){
+
+    }
+
+
     /**
      * Add some users to the database that we can authenticate against
      */
     public void initializeUsers(){
-        User bob = new User("bob", passwordEncoder.encode("password"), "USER", "");
-        User admin = new User("admin", passwordEncoder.encode("password"), "ADMIN", "");
+
+        Organization org = new Organization();
+        org.setOrganizationName("Mercy");
+        organizationService.saveOrganization(org);
+
+        User bob = new User("bob", passwordEncoder.encode("password"), "USER", "",org);
+        User admin = new User("admin", passwordEncoder.encode("password"), "ADMIN", "",org);
         List<User> users = Arrays.asList(bob,admin);
         this.userRepository.saveAll(users);
     }

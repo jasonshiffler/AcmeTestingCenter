@@ -42,11 +42,17 @@ public class User {
     @Column
     private String permissions;
 
-    public User(String username, String password, String roles, String permissions){
+    @ManyToOne
+    @JoinColumn(name="org_id", nullable = false,updatable = false)
+    private Organization organization;
+
+
+    public User(String username, String password, String roles, String permissions, Organization organization){
         this.username = username;
         this.password = password;
         this.roles = roles;
         this.permissions = permissions;
         this.active = true;
+        this.organization = organization;
     }
 }
