@@ -2,10 +2,12 @@ package com.shiffler.AcmeTestingCenter.repository;
 
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
+import com.shiffler.AcmeTestingCenter.entity.Organization;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOrder, Long> {
@@ -22,4 +24,6 @@ public interface MedicalTestOrderRepository extends CrudRepository<MedicalTestOr
     long countByTestOrderStatusEnumAndTestCode(MedicalTestOrderStatusEnum medicalTestOrderStatusEnum,
                                                String testCode);
 
+    //Find a test order with a matching id and organization
+    Optional<MedicalTestOrder> findByIdAndOrganization(Long id, Organization organization);
 }

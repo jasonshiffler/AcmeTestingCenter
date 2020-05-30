@@ -1,9 +1,6 @@
 package com.shiffler.AcmeTestingCenter.service;
 
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestResultEnum;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
+import com.shiffler.AcmeTestingCenter.entity.*;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestOrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +39,8 @@ public class MedicalTestOrderServiceImpl implements MedicalTestOrderService {
      * @return An Optional of the MedicalTestOrder that matches the id
      */
     @Override
-    public Optional<MedicalTestOrder> getMedicalTestOrderById(Long id) {
-        return medicalTestOrderRepository.findById(id);
+    public Optional<MedicalTestOrder> getMedicalTestOrderByIdAndOrganization(Long id, Organization organization) {
+        return medicalTestOrderRepository.findByIdAndOrganization(id,organization);
     }
 
     /**

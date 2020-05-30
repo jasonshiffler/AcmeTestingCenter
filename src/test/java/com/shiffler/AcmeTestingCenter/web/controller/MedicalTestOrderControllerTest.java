@@ -101,7 +101,7 @@ class MedicalTestOrderControllerTest {
         //Given
 
         given(medicalTestOrderService
-                .getMedicalTestOrderById(anyLong()))
+                .getMedicalTestOrderByIdAndOrganization(anyLong(),any()))
                 .willReturn(Optional.of(medicalTestOrder));
 
         given(medicalTestOrderMapper
@@ -133,7 +133,7 @@ class MedicalTestOrderControllerTest {
     @DisplayName("Test getMedicalTestOrderByIdNotFound - Element isn't found")
     void getMedicalTestOrderByIdNotFound() throws Exception {
         given(medicalTestOrderService
-                .getMedicalTestOrderById(anyLong()))
+                .getMedicalTestOrderByIdAndOrganization(anyLong(),any()))
                 .willThrow(new NoSuchElementException());
 
         MvcResult result = mockMvc.perform(get("/api/v1/medicaltestorders/" + medicalTestOrder.getId()))

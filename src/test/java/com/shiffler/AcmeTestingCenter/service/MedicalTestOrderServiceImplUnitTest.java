@@ -100,13 +100,13 @@ public class MedicalTestOrderServiceImplUnitTest {
 
 
     @Test
-    void getMedicalTestOrderById() {
+    void getMedicalTestOrderByIdAndOrganization() {
 
         //When- We search for the MedicalTestOrder by id
-        medicalTestOrderService.getMedicalTestOrderById(anyLong());
+        medicalTestOrderService.getMedicalTestOrderByIdAndOrganization(anyLong(),any());
 
         //Then - The Repository should call its findById method and then should be finished.
-        then(medicalTestOrderRepository).should(times(1)).findById(anyLong());
+        then(medicalTestOrderRepository).should(times(1)).findByIdAndOrganization(anyLong(),any());
         then(medicalTestOrderRepository).shouldHaveNoMoreInteractions();
 
     }

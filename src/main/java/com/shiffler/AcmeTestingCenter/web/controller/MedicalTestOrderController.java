@@ -44,12 +44,17 @@ public class MedicalTestOrderController {
      * Allows a MedicalTest Order to be retrieved by the id. Returns a Dto object to hide fields that the end user
      * doesn't need to see.
      * @param id - the id of the MedicalTestOrder that is being retrieved
+     * @param principal - the principle associated with the request
      * @return - The Medical Test Order in JSON format
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalTestOrderDto> getMedicalTestOrderById(@PathVariable("id") Long id){
+    public ResponseEntity<MedicalTestOrderDto> getMedicalTestOrderById(@PathVariable("id") Long id,Principal principal){
 
-        Optional<MedicalTestOrder> optionalMedicalTestOrder = medicalTestOrderService.getMedicalTestOrderById(id);
+        //Determine the organization the user is associated with
+        Organization organization = userService.getOrgByUsername(principal.getName());
+
+        Optional<MedicalTestOrder> optionalMedicalTestOrder = medicalTestOrderService
+                .getMedicalTestOrderByIdAndOrganization(id, organization);
 
         MedicalTestOrderDto medicalTestOrderDto = medicalTestOrderMapper
                 .medicalTestOrderToMedicalTestOrderDto(optionalMedicalTestOrder.get());
