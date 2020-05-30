@@ -8,6 +8,8 @@ import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
 import com.shiffler.AcmeTestingCenter.entity.MedicalTestResultEnum;
 import com.shiffler.AcmeTestingCenter.service.MedicalTestOrderService;
+import com.shiffler.AcmeTestingCenter.service.UserService;
+import com.shiffler.AcmeTestingCenter.service.UserServiceImpl;
 import com.shiffler.AcmeTestingCenter.web.mappers.MedicalTestOrderMapper;
 import com.shiffler.AcmeTestingCenter.web.model.MedicalTestOrderDto;
 import org.junit.jupiter.api.AfterEach;
@@ -47,6 +49,10 @@ class MedicalTestOrderControllerTest {
     @MockBean
     UserDetailsService userDetailsService; //Spring Security is looking for a bean of this type and will not
                                            //load without a userDetailsService available.
+
+    @MockBean
+    UserService userService;
+
 
     @Autowired
     MockMvc mockMvc;

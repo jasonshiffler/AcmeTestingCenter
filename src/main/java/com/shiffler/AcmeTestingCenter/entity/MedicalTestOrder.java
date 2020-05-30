@@ -55,4 +55,8 @@ public class MedicalTestOrder {
     @Enumerated(EnumType.STRING)
     private MedicalTestResultEnum medicalTestResultEnum;
 
+    @ManyToOne
+    @JoinColumn(name="org_id", nullable = false,updatable = false)
+    private Organization organization;
+
 }

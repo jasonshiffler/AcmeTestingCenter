@@ -2,10 +2,7 @@
 
 package com.shiffler.AcmeTestingCenter.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -18,7 +15,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Data
+@Getter //Using these instead of @Data. The toString generated from Lombok generates a circular reference which causes
+        //a problem
+@Setter
 @Table(name="organization", uniqueConstraints = @UniqueConstraint(name = "organization_name_must_be_unique"
         ,columnNames = "organization_name"))
 public class Organization {
@@ -36,6 +35,6 @@ public class Organization {
     private OffsetDateTime createdDateTime;
 
     @OneToMany(mappedBy="organization")
-    private Set<User> users = new HashSet<>();
+    private Set<User> users;
 
 }

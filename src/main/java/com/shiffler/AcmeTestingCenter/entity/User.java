@@ -4,10 +4,7 @@ Defines user objects which will be used for authentication and authorization
 
 package com.shiffler.AcmeTestingCenter.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -16,7 +13,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Data
+@Getter //Using these instead of @Data. The toString generated from Lombok generates a circular reference which causes
+        //a problem
+@Setter
 //Can't have a table named user in postgres
 @Table(name="user_entity", uniqueConstraints = @UniqueConstraint(name = "username_must_be_unique"
         ,columnNames = "username"))
@@ -43,7 +42,7 @@ public class User {
     private String permissions;
 
     @ManyToOne
-    @JoinColumn(name="org_id", nullable = false,updatable = false)
+    @JoinColumn(name="org_id", nullable = false)
     private Organization organization;
 
 

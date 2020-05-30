@@ -116,7 +116,7 @@ public class InitializeTestingCenter implements CommandLineRunner {
     public void initializeUsers(){
 
         Organization org = new Organization();
-        org.setOrganizationName("Mercy");
+        org.setOrganizationName("General Hospital");
         organizationService.saveOrganization(org);
 
         User bob = new User("bob", passwordEncoder.encode("password"), "USER", "",org);

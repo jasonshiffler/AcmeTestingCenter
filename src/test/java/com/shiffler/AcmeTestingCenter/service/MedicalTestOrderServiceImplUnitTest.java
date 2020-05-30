@@ -1,9 +1,6 @@
 package com.shiffler.AcmeTestingCenter.service;
 
-import com.shiffler.AcmeTestingCenter.entity.MedicalTest;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrder;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestOrderStatusEnum;
-import com.shiffler.AcmeTestingCenter.entity.MedicalTestResultEnum;
+import com.shiffler.AcmeTestingCenter.entity.*;
 import com.shiffler.AcmeTestingCenter.repository.MedicalTestOrderRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,11 +44,15 @@ public class MedicalTestOrderServiceImplUnitTest {
 
     List<MedicalTestOrder> medicalTestOrderList;
     MedicalTestOrder medicalTestOrderEntry1; //This is for a test where the test is currently being conducted
-    MedicalTestOrder medicalTestOrderEntry2; //This
+    MedicalTestOrder medicalTestOrderEntry2;
 
+    Organization organization;
 
     @BeforeEach
     void init(){
+
+        organization = new Organization();
+        organization.setOrganizationName("General Hospital");
 
         //Initialized two MedicalTestOrders for testing
         medicalTestOrder = new MedicalTestOrder();
@@ -62,14 +63,14 @@ public class MedicalTestOrderServiceImplUnitTest {
         medicalTestOrderEntry1.setTestCode("00000A0002");
         medicalTestOrderEntry1.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.TEST_IN_PROCESS);
         medicalTestOrderEntry1.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
+        medicalTestOrderEntry1.setOrganization(organization);
 
         medicalTestOrderEntry2 = new MedicalTestOrder();
         medicalTestOrderEntry2.setId(100000000L);
         medicalTestOrderEntry2.setTestCode("00000A0002");
         medicalTestOrderEntry2.setTestOrderStatusEnum(MedicalTestOrderStatusEnum.ORDER_PLACED);
         medicalTestOrderEntry2.setMedicalTestResultEnum(MedicalTestResultEnum.WAITING_FOR_RESULT);
-
-
+        medicalTestOrderEntry2.setOrganization(organization);
 
         //Initialize a List of MedicalTests that will be used as an Iterable
         medicalTestOrderList = new ArrayList<>();
