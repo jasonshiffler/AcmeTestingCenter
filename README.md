@@ -2,14 +2,14 @@ This is a Spring Boot project that involves a Medical Test Center. The test cent
 
 Technologies include:
 
--Spring Boot
--Spring MVC
--Spring Security
--Thymeleaf
--MapStruct
--Lombok
--Cucumber
--Postgresql
+-Spring Boot  
+-Spring MVC  
+-Spring Security  
+-Thymeleaf  
+-MapStruct  
+-Lombok  
+-Cucumber  
+-Postgresql  
 
-Current API documentation can be found here:
-https://app.swaggerhub.com/apis-docs/jasonshiffler/AcmeTestingCenter/1.0.0
+Current API documentation can be found here:  
+https://app.swaggerhub.com/apis-docs/jasonshiffler/AcmeTestingCenter/1.0.0  
