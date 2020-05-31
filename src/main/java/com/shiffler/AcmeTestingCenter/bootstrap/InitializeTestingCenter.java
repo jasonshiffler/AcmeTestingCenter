@@ -115,13 +115,18 @@ public class InitializeTestingCenter implements CommandLineRunner {
      */
     public void initializeUsers(){
 
-        Organization org = new Organization();
-        org.setOrganizationName("General Hospital");
-        organizationService.saveOrganization(org);
+        Organization org1 = new Organization();
+        org1.setOrganizationName("General Hospital");
+        organizationService.saveOrganization(org1);
 
-        User bob = new User("bob", passwordEncoder.encode("password"), "USER", "",org);
-        User admin = new User("admin", passwordEncoder.encode("password"), "ADMIN", "",org);
-        List<User> users = Arrays.asList(bob,admin);
+        Organization org2 = new Organization();
+        org2.setOrganizationName("Specific Hospital");
+        organizationService.saveOrganization(org2);
+
+
+        User spadmin = new User("spadmin", passwordEncoder.encode("password"), "ADMIN", "",org2);
+        User admin = new User("admin", passwordEncoder.encode("password"), "ADMIN", "",org1);
+        List<User> users = Arrays.asList(spadmin,admin);
         this.userRepository.saveAll(users);
     }
 
